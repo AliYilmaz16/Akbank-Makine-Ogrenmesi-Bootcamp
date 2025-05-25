@@ -1,61 +1,107 @@
-# Student Performance Prediction (Multi-Dataset Regression Project)
+# Trafik Kazası Şiddeti Tahmin Sistemi – Akbank Makine Öğrenmesi Bootcamp Projesi
 
-## Problem Tanımı
+Bu proje, **Akbank & Global AI Hub Makine Öğrenmesi Bootcamp** kapsamında gerçekleştirilmiştir.  
+Amaç, Birleşik Krallık'ta meydana gelen trafik kazalarının şiddetinin, kazaya ait temel bilgiler kullanılarak makine öğrenmesi modelleri yardımıyla tahmin edilmesidir.
 
-Bu projede öğrencilerin akademik performanslarını tahmin etmek amacıyla **iki farklı veri seti** kullanılarak **regresyon modelleri** geliştirilmiştir.  
-İlk modelde doğrudan hedef değişkenle yüksek korelasyon içeren bir öznitelik modeli yapay olarak şişirdiği için ikinci, daha doğal bir veri setiyle yeni bir model oluşturulmuştur.
+---
 
-## Amaç
+## Kullanılan Veri Seti
 
-- Öğrencilerin notlarını çeşitli kişisel ve akademik faktörlere göre tahmin etmek
-- Farklı regresyon modellerini karşılaştırarak en başarılı yaklaşımı belirlemek
-- Gerçek veriyle daha açıklayıcı ve yorumlanabilir model üretmek
+- **Kaynak:** [Kaggle – UK Road Accident Dataset](https://www.kaggle.com/datasets/devansodariya/road-accident-united-kingdom-uk-dataset)
+- **Toplam veri:** 1.504.150 satır  
+- **Sütun sayısı:** 33 (temel bilgiler, çevresel koşullar vb.)
+- **Hedef değişken:** `Accident_Severity`  
+    - `1`: Ölümcül Kaza  
+    - `2`: Ciddi Yaralanmalı Kaza  
+    - `3`: Hafif Yaralanmalı Kaza  
 
-## Kullanılan Veri Setleri
+---
 
-1. [Predict Students Drop Out of the Course](https://www.kaggle.com/datasets/kapturovalexander/predict-students-drop-out-of-the-course)
-2. [Student Performance - Multiple Linear Regression](https://www.kaggle.com/datasets/nikhil7280/student-performance-multiple-linear-regression)
+## Veri Analizi (EDA)
 
-## Veri Analizi
+- Veri setinde ciddi sınıf dengesizliği bulunmaktadır (Hafif kazalar çoğunluktadır).
+- `Light_Conditions`, `Road_Type`, `Weather_Conditions` gibi değişkenlerin kaza şiddetiyle ilişkili olduğu gözlemlenmiştir.
+- Sayısal değişkenler (araç sayısı, yaralı sayısı, hız limiti vb.) ile hedef arasında zayıf korelasyonlar mevcuttur.
 
-İlk veri setinde `Exam_Score (%)` ile `Final_Grade` arasında yüksek korelasyon olması nedeniyle model doğruluğu yapay biçimde yükselmiştir.  
-> Bu özellik çıkarıldığında modelin R² skoru %50’lere kadar düşmüştür.
+---
 
-Bu nedenle ikinci veri seti ile daha sağlam bir model geliştirilmiştir.
+## Veri Ön İşleme
 
-## Kullanılan Yöntemler
+- Gereksiz/boş sütunlar silinmiştir.
+- 14 kategorik sütun encode edilmiştir:
+  - Sıralı kategoriler → **Label Encoding**
+  - Nominal ve yüksek kardinaliteli değişkenler → **One-Hot Encoding**
+- Düşük varyanslı (bilgi taşımayan) 202 sütun çıkarılmıştır.
+- **SMOTE** planlanmış ancak kaynak sınırları nedeniyle uygulanmamıştır.
 
-- Label Encoding
-- Train/Test Split
-- Keşifsel Veri Analizi (EDA)
-- Regresyon Modelleri:
-  - Linear Regression
-  - Ridge / Lasso
-  - Decision Tree / Random Forest
-- Performans Metrikleri:
-  - MAE
-  - RMSE
-  - R²
-- Feature Importance (özellik önem sıralaması)
+---
 
-## Model Sonuçları (İkinci Veri Seti)
+## Modelleme ve Karşılaştırma
 
-| Model                 | MAE  | RMSE | R²    |
-|----------------------|------|------|-------|
-| Linear Regression     | 1.61 | 2.02 | 0.989 |
-| Ridge Regression      | 1.61 | 2.02 | 0.989 |
-| Lasso Regression      | 1.75 | 2.21 | 0.987 |
-| Random Forest         | 1.81 | 2.27 | 0.986 |
-| Decision Tree         | 2.34 | 2.97 | 0.976 |
+Aşağıdaki üç model test edilmiştir:
 
-## Özellik Önem Sıralaması (Random Forest)
+| Model               | Ortalama F1 (macro) | Standart Sapma |
+|---------------------|---------------------|----------------|
+| Logistic Regression | 0.3295              | 0.0012         |
+| Decision Tree       | **0.3796**          | **0.0008**     |
+| Random Forest       | 0.3639              | 0.0009         |
 
-- `Previous Scores`: %84.7
-- `Hours Studied`: %14.1
-- Diğer değişkenler: < %1
+---
 
-## Sonuç
+## Seçilen Nihai Model: Decision Tree
 
-- İlk modelde yapay başarıya neden olan öznitelik fark edilerek veri kalitesi sorgulanmıştır.
-- İkinci modelde `Previous Scores` ve `Hours Studied` en önemli faktörler olarak öne çıkmıştır.
-- Basit modeller (Linear/Ridge) dahi yüksek başarı göstermiştir.
+- **GridSearchCV** ile hiperparametre optimizasyonu yapılmıştır.
+- **En iyi parametreler:**
+  - `criterion='gini'`
+  - `max_depth=None`
+  - `max_features='log2'`
+  - `min_samples_split=2`
+- Test setinde **F1-macro** skoru: **0.380**
+- Hafif kazalarda başarılı, ancak ölümcül kazalarda düşük başarı göstermektedir.
+
+---
+
+## Değerlendirme Metrikleri
+
+- **Accuracy:** 0.76  
+- **Macro F1 Score:** 0.38  
+- **Confusion Matrix:** Ölümcül kazalar yalnızca %6 doğrulukla tahmin edilmiştir.
+
+---
+
+##  Veri Dengesizliği Sorunu
+
+- `Accident_Severity = 3` (Hafif kaza) sınıfı veri setinde baskındır.
+- `class_weight='balanced'` kullanılmış olsa da, sınıf dengesizliği devam etmektedir.
+- **Azınlık sınıflar** için (1 = Ölümcül, 2 = Ciddi) **Recall** değeri düşüktür.
+- **SMOTE, ADASYN, focal loss** gibi yaklaşımlar ilerleyen çalışmalarda önerilmektedir.
+
+---
+
+## Gerçek Hayatta Kullanım Alanları
+
+- Trafik kazası verilerinin analiziyle **emniyet ve şehir planlaması**
+- **Yüksek riskli alanların** belirlenmesi
+- **Karar destek sistemleri** ile trafik güvenliğini artırma
+
+---
+
+## Geliştirme Önerileri
+
+- **SMOTE, ADASYN, Focal Loss** gibi dengeleme tekniklerinin kullanılması
+- **SHAP / Feature Importance** gibi araçlarla önemli özniteliklerin belirlenmesi
+- Modelin bir **web arayüzüne** entegre edilerek sahada aktif kullanımının sağlanması
+
+---
+
+## 🔗 Proje Bağlantıları
+
+- 📄 [Kaggle Notebook](https://www.kaggle.com/code/aliyilmazbm/akbank-makine-ogrenmesi-bootcamp-trafik-kazasi)
+
+---
+
+## Geliştirici
+
+**Ali Yılmaz**  
+Akbank & Global AI Hub  
+Makine Öğrenmesi Bootcamp – Mayıs 2025
