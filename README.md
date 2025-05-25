@@ -1,4 +1,4 @@
-# Trafik Kazası Şiddeti Tahmin Sistemi – Akbank Makine Öğrenmesi Bootcamp Projesi
+# Trafik Kazası Şiddeti Tahmin Sistemi – Akbank & Global AI Hub Makine Öğrenmesi Bootcamp Projesi
 
 Bu proje, **Akbank & Global AI Hub Makine Öğrenmesi Bootcamp** kapsamında gerçekleştirilmiştir.  
 Amaç, Birleşik Krallık'ta meydana gelen trafik kazalarının şiddetinin, kazaya ait temel bilgiler kullanılarak makine öğrenmesi modelleri yardımıyla tahmin edilmesidir.
