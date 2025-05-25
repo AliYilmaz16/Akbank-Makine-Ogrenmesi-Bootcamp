@@ -96,9 +96,9 @@ Aşağıdaki üç model test edilmiştir:
 
 ---
 
-## 🔗 Proje Bağlantıları
+## Proje Bağlantıları
 
-- 📄 [Kaggle Notebook](https://www.kaggle.com/code/aliyilmazbm/akbank-makine-ogrenmesi-bootcamp-trafik-kazasi)
+- [Kaggle Notebook](https://www.kaggle.com/code/aliyilmazbm/akbank-makine-ogrenmesi-bootcamp-trafik-kazasi)
 
 ---
 
