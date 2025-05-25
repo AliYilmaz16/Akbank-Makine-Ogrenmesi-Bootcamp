@@ -62,9 +62,11 @@ Aşağıdaki üç model test edilmiştir:
 ---
 
 ## Değerlendirme Metrikleri
+<img width="415" alt="Ekran Resmi 2025-05-25 23 37 00" src="https://github.com/user-attachments/assets/fb79e831-b97a-42d9-bc4e-50d55a60058b" />  
+
 
 - **Accuracy:** 0.76  
-- **Macro F1 Score:** 0.38  
+- **Macro F1 Score:** 0.38
 - **Confusion Matrix:** Ölümcül kazalar yalnızca %6 doğrulukla tahmin edilmiştir.
 
 ---
